@@ -12,5 +12,11 @@ namespace CircleApp.Data.Models
         public int NrOfReposts { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
+
+        // Foreign Key
+        public int UserId { get; set; }
+
+        //Navigation properties
+        public User User { get; set; }
     }
 }
