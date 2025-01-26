@@ -40,6 +40,28 @@ namespace CircleApp.Controllers
                 UserId = loggedInUser
 
             };
+
+            // Check and save the image
+            if (post.Image != null && post.Image.Length > 0)
+            {
+                string rootFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+
+                if (post.Image.ContentType.Contains("image"))
+                {
+                    string rootFolderPathImage = Path.Combine(rootFolderPath, "images");
+                    Directory.CreateDirectory(rootFolderPathImage);
+
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(post.Image.FileName);
+                    string filePath = Path.Combine(rootFolderPathImage, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                        await post.Image.CopyToAsync(stream);
+
+                    // Set the URL to the newPost object
+                    newPost.ImageUrl = "/images/" + fileName;
+                }
+            }
+
             // Add the post to the database
             await _context.Posts.AddAsync(newPost);
             await _context.SaveChangesAsync();
