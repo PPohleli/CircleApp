@@ -14,5 +14,6 @@ namespace CircleApp.Data.Models
 
         //Navigation properties: One-Many relationship (Posts)
         public ICollection<Post> Posts { get; set; } = new List<Post>();
+        public ICollection<Like> Likes { get;} = new List<Like>();
     }
 }
