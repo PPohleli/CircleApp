@@ -100,7 +100,7 @@
             <a class="button-icon">
                 <ion-icon class="text-lg" name="chatbubble-ellipses-outline"></ion-icon>
             </a>
-            <a href#>5</a>
+            <a href#>@Model.Comments.Count</a>
         </div>
         <div class="ml-auto"></div>
         <div>
@@ -111,6 +111,36 @@
     </div>
     @* Add comment section *@
     <div>
+        <div class="p-2.5 border-t border-gray-100 font-normal space-y-3 relative">
+            @foreach (var comment in Model.Comments)
+            {
+                TimeSpan CommentTimeSpanSincePosted = DateTime.UtcNow.Subtract(comment.DateCreated);
+                string commentDisplayTime = CommentTimeSpanSincePosted switch
+                {
+                    var t when t.TotalDays >= 1 => $"{(int)t.TotalDays}d ago",
+                    var t when t.TotalHours >= 1 => $"{(int)t.TotalHours}h ago",
+                    var t when t.TotalMinutes >= 1 => $"{(int)t.TotalMinutes}m ago",
+                    _ => "Just now"
+                };
+
+                <div class="flex items-start gap-3 relative">
+                    <a>
+                        <img src="@(comment.User.ProfilePictureUrl ?? "~/images/avatars/user.png")" class="w-6 h-6 mt-1 rounded-full" />
+                    </a>
+                    <div class="flex-1">
+                        <div class="flex justify-content-between">
+                            <a class="text-black font-medium inline-block flex-grow">
+                                @comment.User.FullName
+                            </a>
+                            <small>@commentDisplayTime</small>
+                        </div>
+                        <p class="mt-0.5">
+                            @comment.Content
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
         <form asp-controller="Home" asp-action="AddPostComment">
             <div class="px-sm-4 py-sm-3 p-2.5 border-t border-gray-100 flex items-center gap-1">
                 <img src="~/images/avatars/user.png" class="w-6 h-6 rounded-full" />
