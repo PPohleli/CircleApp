@@ -93,6 +93,30 @@ namespace CircleApp.Controllers
             }
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
+        {
+            int loggedInUserId = 1;
+
+            // Check if user has already favorited the post
+            var favorite = await _context.Favorites.Where(f => f.PostId == postFavoriteVM.PostId && f.UserId == loggedInUserId).FirstOrDefaultAsync();
+
+            if (favorite != null)
+            {
+                _context.Favorites.Remove(favorite);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                var newFavorite = new Favorite()
+                {
+                    PostId = postFavoriteVM.PostId,
+                    UserId = loggedInUserId
+                };
+                await _context.Favorites.AddAsync(newFavorite);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddPostComment (PostCommentVM postCommentVM)
