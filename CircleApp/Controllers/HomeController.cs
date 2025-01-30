@@ -93,6 +93,7 @@ namespace CircleApp.Controllers
             }
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         public async Task<IActionResult> AddPostComment (PostCommentVM postCommentVM)
         {
@@ -111,6 +112,19 @@ namespace CircleApp.Controllers
             await _context.Comments.AddAsync(newComment);
             await _context.SaveChangesAsync();
 
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemovePostComment(RemoveCommentVM removeCommentVM)
+        {
+            var commentDb = await _context.Comments.FirstOrDefaultAsync(c => c.Id == removeCommentVM.CommentId);
+
+            if (commentDb != null)
+            {
+                _context.Comments.Remove(commentDb);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction("Index");
         }
     }
