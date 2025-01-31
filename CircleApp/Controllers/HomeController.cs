@@ -28,7 +28,9 @@ namespace CircleApp.Controllers
                 .Include(n => n.User)
                 .Include(n => n.Likes)
                 .Include(n => n.Favorites)
-                .Include(n => n.Comments).ThenInclude(n => n.User).OrderByDescending(n => n.DateCreated).ToListAsync();
+                .Include(n => n.Comments).ThenInclude(n => n.User)
+                .Include(n => n.Reports)
+                .OrderByDescending(n => n.DateCreated).ToListAsync();
             return View(allPosts);
         }
 
