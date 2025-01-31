@@ -142,6 +142,24 @@ namespace CircleApp.Controllers
             }
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        public async Task<IActionResult> AddPostReport(PostReportVM postReportVM)
+        {
+            //get id for the logged in user
+            int loggedInUserId = 1;
+
+            // create a post object
+            var newReport = new Report()
+            {
+                UserId = loggedInUserId,
+                PostId = postReportVM.PostId,
+                DateCreated = DateTime.UtcNow,
+            };
+            await _context.Reports.AddAsync(newReport);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddPostComment (PostCommentVM postCommentVM)
