@@ -31,6 +31,7 @@
     bool isLiked = Model.Likes.Any(n => n.UserId == 1);
     bool isFavorite = Model.Favorites.Any(n => n.UserId == 1);
     bool isPrivate = Model.IsPrivate == true && Model.UserId == 1;
+    bool isReported = Model.Reports.Any(n => n.UserId == 1);
 }
 
 <div class="bg-white rounded-xl shadow-sm text-sm font-medium border1">
@@ -51,12 +52,7 @@
                 <ion-icon class="text-xl" name="ellipsis-horizontal"></ion-icon>
             </button>
             <div class="w-[245px]" uk-dropdown="pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click">
-                <form>
-                    <button type="button" class="hover:!bg-red-50 icon-link">
-                        <ion-icon class="text-xl shrink-0" name="flag-outline"></ion-icon> Report
-                    </button>
-                </form>
-                <hr />
+                
                 @if (Model.UserId == 1)
                 {
                     <form asp-controller="Home" asp-action="TogglePostVisibility">
@@ -66,12 +62,24 @@
                         </button>
                     </form>
                     <hr />
+                    <form>
+                        <button type="button" class="hover:!bg-red-50 icon-link">
+                            <ion-icon class="text-xl" name="trash-bin-outline"></ion-icon> Delete post
+                        </button>
+                    </form>
                 }
-                <form>
-                    <button type="button" class="hover:!bg-red-50 icon-link">
-                        <ion-icon class="text-xl" name="trash-bin-outline"></ion-icon> Delete post
-                    </button>
-                </form>
+                @* else{} *@
+                @if (!isReported)
+                {
+                    <form asp-controller="Home" asp-action="AddPostReport">
+                        <input type="hidden" name="postId" value="@Model.Id" />
+                        <button type="submit" class="hover:!bg-red-50 icon-link">
+                            <ion-icon class="text-xl shrink-0" name="flag-outline"></ion-icon> Report
+                        </button>
+                    </form>
+                    <hr />
+                }
+
             </div>
         </div>
     </div>
