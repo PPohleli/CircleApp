@@ -20,7 +20,15 @@ namespace CircleApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var allPosts = await _context.Posts.Include(n => n.User).Include(n => n.Likes).Include(n => n.Favorites).Include(n => n.Comments).ThenInclude(n => n.User).OrderByDescending(n => n.DateCreated).ToListAsync();
+            var loggedInUserId = 1;
+
+            var allPosts = await _context.Posts
+                //.Where(n => !n.IsPrivate)
+                .Where(n => !n.IsPrivate || n.UserId == loggedInUserId)
+                .Include(n => n.User)
+                .Include(n => n.Likes)
+                .Include(n => n.Favorites)
+                .Include(n => n.Comments).ThenInclude(n => n.User).OrderByDescending(n => n.DateCreated).ToListAsync();
             return View(allPosts);
         }
 
