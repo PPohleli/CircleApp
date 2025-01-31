@@ -119,6 +119,23 @@ namespace CircleApp.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
+        {
+            int loggedInUserId = 1;
+
+            // get post by id and logged in user id
+            var post = await _context.Posts.FirstOrDefaultAsync(l => l.Id == postVisibilityVM.PostId && l.UserId == loggedInUserId);
+
+            if (post != null)
+            {
+                post.IsPrivate = !post.IsPrivate;
+                _context.Posts.Update(post);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AddPostComment (PostCommentVM postCommentVM)
         {
             //get id for the logged in user
