@@ -96,9 +96,8 @@
 
 <script>
     function openPostDeleteConfirmation(postId) {
-        console.log('Selected post Id - ', postId);
         UIkit.dropdown('.post-options-dropdown').hide();
-        document.getElementById('postId').value = postId;
+        document.getElementById('deleteConfirmationPostId').value = postId;
         UIkit.modal('#postDeleteDialog').show();
     }
 </script>
