@@ -24,7 +24,7 @@ namespace CircleApp.Controllers
 
             var allPosts = await _context.Posts
                 //.Where(n => !n.IsPrivate)
-                .Where(n => (!n.IsPrivate || n.UserId == loggedInUserId) && n.Reports.Count < 5)
+                .Where(n => (!n.IsPrivate || n.UserId == loggedInUserId) && n.Reports.Count < 5 && !n.IsDeleted)
                 .Include(n => n.User)
                 .Include(n => n.Likes)
                 .Include(n => n.Favorites)
@@ -204,7 +204,8 @@ namespace CircleApp.Controllers
 
             if (postDb != null)
             {
-                _context.Posts.Remove(postDb);
+                postDb.IsDeleted = true;
+                _context.Posts.Update(postDb);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("Index");
