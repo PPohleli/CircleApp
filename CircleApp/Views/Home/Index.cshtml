@@ -92,3 +92,13 @@
 </main>
 <partial name="Modals/_CreateStory" />
 <partial name="Modals/_CreateStatus" model="new PostVM()" />
+<partial name="Home/_PostDeleteConfirmation" />
+
+<script>
+    function openPostDeleteConfirmation(postId) {
+        console.log('Selected post Id - ', postId);
+        UIkit.dropdown('.post-options-dropdown').hide();
+        document.getElementById('postId').value = postId;
+        UIkit.modal('#postDeleteDialog').show();
+    }
+</script>
