@@ -22,8 +22,6 @@ namespace CircleApp.Data
             modelBuilder.Entity<User>().HasMany(u => u.Posts).WithOne(p => p.User).HasForeignKey(p => p.UserId);
             modelBuilder.Entity<User>().HasMany(u => u.Stories).WithOne(p => p.User).HasForeignKey(p => p.UserId);
 
-            
-
             // Like
             modelBuilder.Entity<Like>().HasKey(l => new { l.PostId, l.UserId});
             modelBuilder.Entity<Like>().HasOne(l => l.Post).WithMany(p => p.Likes).HasForeignKey(l => l.PostId).OnDelete(DeleteBehavior.NoAction);
