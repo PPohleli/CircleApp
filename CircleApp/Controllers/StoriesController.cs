@@ -15,13 +15,6 @@ namespace CircleApp.Controllers
             _context = contect;
         }
 
-        //public async Task<IActionResult> Index()
-        
-        //{
-        //    var allStories = await _context.Stories.Include(s => s.User).ToListAsync();
-        //    return View(allStories);
-        //}
-
         public async Task<IActionResult> CreateStory(StoryVM storyVM)
         {
             int loggedInUser = 1;
