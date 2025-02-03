@@ -14,7 +14,7 @@ namespace CircleApp.Controllers
             _context = contect;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             return View();
         }
