@@ -2,6 +2,7 @@
 using CircleApp.Data.Models;
 using CircleApp.ViewModels.Stories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CircleApp.Controllers
 {
@@ -15,8 +16,10 @@ namespace CircleApp.Controllers
         }
 
         public async Task<IActionResult> Index()
+        
         {
-            return View();
+            var allStories = await _context.Stories.Include(s => s.User).ToListAsync();
+            return View(allStories);
         }
 
         public async Task<IActionResult> CreateStory(StoryVM storyVM)
@@ -37,7 +40,7 @@ namespace CircleApp.Controllers
 
                 if (storyVM.Image.ContentType.Contains("image"))
                 {
-                    string rootFolderPathImage = Path.Combine(rootFolderPath, "images/stories");
+                    string rootFolderPathImage = Path.Combine(rootFolderPath, "images/stories/");
                     Directory.CreateDirectory(rootFolderPathImage);
 
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(storyVM.Image.FileName);
@@ -47,7 +50,7 @@ namespace CircleApp.Controllers
                         await storyVM.Image.CopyToAsync(stream);
 
                     // Set the URL to the newPost object
-                    newStory.ImageUrl = "/images/stories" + fileName;
+                    newStory.ImageUrl = "/images/stories/" + fileName;
                 }
             }
             await _context.Stories.AddAsync(newStory);
