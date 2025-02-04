@@ -15,7 +15,7 @@ namespace CircleApp.ViewComponents
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var top3Hashtags = await _context.Hashtags.Where(h => h.DateCreated >= h.DateCreated.AddDays(-7)).OrderByDescending(n => n.Count).Take(3).ToListAsync();
+            var top3Hashtags = await _context.Hashtags.Where(h => h.DateCreated >= h.DateCreated.AddDays(-7) && h.Count > 0).OrderByDescending(n => n.Count).Take(3).ToListAsync();
             return View(top3Hashtags);
         }
     }
