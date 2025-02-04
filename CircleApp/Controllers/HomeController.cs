@@ -1,4 +1,5 @@
 using CircleApp.Data;
+using CircleApp.Data.Helpers;
 using CircleApp.Data.Models;
 using CircleApp.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +76,35 @@ namespace CircleApp.Controllers
             // Add the post to the database
             await _context.Posts.AddAsync(newPost);
             await _context.SaveChangesAsync();
+
+            // Find and Store Hashtags
+            var postHashtags = HashtagHelper.GetHashtags(post.Content);
+
+            foreach(var hashtag in postHashtags)
+            {
+                var hashtagDb = await _context.Hashtags.FirstOrDefaultAsync(n => n.Name == hashtag);
+
+                if (hashtagDb != null)
+                {
+                    hashtagDb.Count += 1;
+                    hashtagDb.DateUpdated = DateTime.UtcNow;
+
+                    _context.Hashtags.Update(hashtagDb);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    var newHashtag = new Hashtag()
+                    {
+                        Name = hashtag,
+                        Count = 1,
+                        DateCreated = DateTime.UtcNow,
+                        DateUpdated = DateTime.UtcNow
+                    };
+                    await _context.Hashtags.AddAsync(newHashtag);
+                    await _context.SaveChangesAsync();
+                }
+            }
 
             //Redirect the user to home page
             return RedirectToAction("Index");
