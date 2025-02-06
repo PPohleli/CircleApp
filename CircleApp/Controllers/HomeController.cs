@@ -1,5 +1,6 @@
 using CircleApp.Data;
 using CircleApp.Data.Helpers;
+using CircleApp.Data.Helpers.Enums;
 using CircleApp.Data.Models;
 using CircleApp.Data.Services;
 using CircleApp.ViewModels.Home;
@@ -14,12 +15,14 @@ namespace CircleApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IHashtagsService _hashtagsService;
         private readonly IPostService _postService;
+        private readonly IFilesService _filesService;
 
-        public HomeController(ILogger<HomeController> logger, IPostService postService, IHashtagsService hashtagsService)
+        public HomeController(ILogger<HomeController> logger, IPostService postService, IHashtagsService hashtagsService, IFilesService filesService)
         {
             _logger = logger;
             _hashtagsService = hashtagsService;
             _postService = postService;
+            _filesService = filesService;
         }
 
         public async Task<IActionResult> Index()
@@ -34,20 +37,20 @@ namespace CircleApp.Controllers
         {
             // Get the logged in user
             int loggedInUser = 1;
-
+            var imageUploadPath = await _filesService.UploadImageAsync(post.Image, ImageFileType.PostImage);
             // Create a new Post/Status
             var newPost = new Post
             {
                 Content = post.Content,
                 DateCreated = DateTime.UtcNow,
                 DateUpdated = DateTime.UtcNow,
-                ImageUrl = "",
+                ImageUrl = imageUploadPath,
                 NrOfReposts = 0,
                 UserId = loggedInUser
 
             };
 
-            await _postService.CreatePostAsync(newPost, post.Image);
+            await _postService.CreatePostAsync(newPost);
             await _hashtagsService.ProcessHashtagsForNewPostAsync(post.Content);
 
             //Redirect the user to home page
