@@ -16,10 +16,10 @@ namespace CircleApp.Data.Services
         {
             string filePathUpload = imageFileType switch
             {
-                ImageFileType.PostImage => "/images/posts",
-                ImageFileType.StoryImage => "/images/stories",
-                ImageFileType.ProfilePicture => "/images/profilePictures",
-                ImageFileType.CoverImage => "/images/covers",
+                ImageFileType.PostImage => Path.Combine("images","posts"),
+                ImageFileType.StoryImage => Path.Combine("images", "stories"),
+                ImageFileType.ProfilePicture => Path.Combine("images", "profilePictures"),
+                ImageFileType.CoverImage => Path.Combine("images", "covers"),
                 _ => throw new ArgumentException("Invalid file type")
             };
 
