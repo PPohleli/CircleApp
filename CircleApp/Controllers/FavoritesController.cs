@@ -10,9 +10,11 @@ namespace CircleApp.Controllers
         {
             _postService = postService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            int loggedInUser = 1;
+            var myFavoritePosts = await _postService.GetAllFavoritedPostsAsync(loggedInUser);
+            return View(myFavoritePosts);
         }
     }
 }
