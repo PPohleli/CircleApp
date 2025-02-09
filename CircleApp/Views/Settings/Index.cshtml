@@ -1,15 +1,16 @@
-﻿@model User
+﻿@model User;
 
 <main id="site__main" class="2xl:ml-[--w-side] xl:ml-[--w-side-sm] p-2.5 h-[calc(100vh-var(--m-top))] mt-[--m-top]">
     <div class="max-w-3xl mx-auto">
         <div class="box relative rounded-lg shadow-md">
             @* Profile picture section *@
             <div class="flex items-center justify-between p-6 pd-4">
-                <form id="updateProfilePictureForm" class="flex items-center gap-4 w-full">
+                <form id="updateProfilePictureForm" class="flex items-center gap-4 w-full" asp-controller="Settings" asp-action="UpdateProfilePicture" enctype="multipart/form-data">
                     <div class="relative w-12 h-12 shrink-0">
-                        <label class="cursor-pointer"><img id="imagePreview" src="@(Model.ProfilePictureUrl ?? "~/images/avatars/user.png")" class="object-cover w-full h-full rounded-full" alt="Profile Picture Paceholder" />
-                            <input type="file" id="imageUpload" name="PrifilePictureImage" class="hidden" accept="image/png, image/jpeg" />
-                            </label>
+                        <label for="imagePreview" class="cursor-pointer">
+                            <img id="imagePreview" src="@(Model.ProfilePictureUrl ?? "~/images/avatars/user.png")" class="object-cover w-full h-full rounded-full" alt="Profile Picture Paceholder" />
+                            <input type="file" id="imageUpload" name="ProfilePictureImage" class="hidden" accept="image/png, image/jpeg" />
+                        </label>
                         <label for="imageUpload" class="p-0.5 rounded-full bg-slate-600 border-white absolute -bottom-2 -right-2 cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3 fill-white">
                                 <path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" />
@@ -21,8 +22,9 @@
                         <h3 class="text-base font-semibold text-black">@Model.FullName</h3>
                         <p class="text-sm text-blue-600 mt-1 font-normal">@@lithaCele</p>
                     </div>
-                    <button type="button" id="saveButton" class="hidden button bg-blue-500 text-white px-4 py-1 rounded ml-auto">
-                        Save</button>
+                    <button type="submit" id="saveButton" class="hidden button bg-blue-500 text-white px-4 py-1 rounded ml-auto">
+                        Save
+                    </button>
                 </form>
             </div>
 
@@ -112,3 +114,23 @@
         </div>
     </div>
 </main>
+<script>
+    const imageUpload = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const saveButton = document.getElementById('saveButton');
+
+    imageUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                saveButton.classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        } else {
+            saveButton.classList.add('hidden');
+        }
+    });
+
+</script>
