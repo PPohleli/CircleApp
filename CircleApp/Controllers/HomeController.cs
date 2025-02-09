@@ -33,6 +33,12 @@ namespace CircleApp.Controllers
             return View(allPosts);
         }
 
+        public async Task<IActionResult> Details(int postId)
+        {
+            var posts = await _postService.GetPostByIdAsync(postId);
+            return View(posts);
+        }
+
         public async Task<IActionResult> CreatePost(PostVM post)
         {
             // Get the logged in user
