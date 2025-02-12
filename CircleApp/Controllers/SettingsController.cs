@@ -2,9 +2,11 @@
 using CircleApp.ViewModels.Settings;
 using CircleApp.Data.Helpers.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CircleApp.Controllers
 {
+    [Authorize]
     public class SettingsController : Controller
     {
         private readonly IUsersService _usersService;
