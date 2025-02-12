@@ -13,6 +13,7 @@
             </div>
             <form asp-controller="Authentication" asp-action="Register" class="space-y-7 text-sm text-black font-medium">
                 <div class="grid grid-cols-2 gap-4 gap-y-7">
+                    <div class="col-span-2 text-red-500" asp-validation-summary="ModelOnly"></div>
                     <div>
                         <label asp-for="FirstName">First Name</label>
                         <div class="mt-2.5">
