@@ -12,12 +12,15 @@
 </head>
 <body>
     <div id="wrapper">
-        @* Topbar *@
-        @* <partial name="Navigation/_TopBar" /> *@
 
-        @* Sidebar (left) *@
-        @* <partial name="Navigation/_SideBar" /> *@
+        @if (User.Identity.IsAuthenticated)
+        {
+            @* Topbar *@
+            <partial name="Navigation/_TopBar" />
 
+            @* Sidebar (left) *@
+            <partial name="Navigation/_SideBar" />
+        }
         @RenderBody()
     </div>
 
