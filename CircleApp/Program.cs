@@ -36,16 +36,16 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Authentication/Login";
     options.AccessDeniedPath = "/Authentication/AccessDenied";
+    options.Cookie.Name = "YourAppCookieName";
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.LoginPath = "/Authentication/Login";
+    // ReturnUrlParameter requires 
+    //using Microsoft.AspNetCore.Authentication.Cookies;
+    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+    options.SlidingExpiration = true;
 });
-
-//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(
-//    options =>
-//    {
-//        options.LoginPath = "/Authentication/Login";
-//        options.AccessDeniedPath = "/Authentication/AccessDenied";
-//    });
 
 builder.Services.AddAuthorization();
 
@@ -79,12 +79,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Authentication}/{action=Login}/{id?}");
-
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
