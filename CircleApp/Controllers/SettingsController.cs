@@ -34,11 +34,5 @@ namespace CircleApp.Controllers
             await _usersService.UpdateUserProfilePicture(loggedInUser, uploadedProfilePictureUrl);
             return RedirectToAction("Index");
         }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateProfile(UpdateProfileVM profileVM)
-        {
-            return RedirectToAction("Index");
-        }
     }
 }
