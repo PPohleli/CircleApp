@@ -8,7 +8,7 @@
                 <form id="updateProfilePictureForm" class="flex items-center gap-4 w-full" asp-controller="Settings" asp-action="UpdateProfilePicture" enctype="multipart/form-data">
                     <div class="relative w-12 h-12 shrink-0">
                         <label for="imagePreview" class="cursor-pointer">
-                            <img id="imagePreview" src="@(Model.ProfilePictureUrl ?? "~/images/avatars/user.png")" class="object-cover w-full h-full rounded-full" alt="Profile Picture Paceholder" />
+                            <img id="imagePreview" src="@(!string.IsNullOrEmpty(Model.ProfilePictureUrl) ? Model.ProfilePictureUrl : Url.Content("~/images/avatars/user.png"))" class="object-cover w-full h-full rounded-full" alt="Profile Picture Paceholder" />
                             <input type="file" id="imageUpload" name="ProfilePictureImage" class="hidden" accept="image/png, image/jpeg" />
                         </label>
                         <label for="imageUpload" class="p-0.5 rounded-full bg-slate-600 border-white absolute -bottom-2 -right-2 cursor-pointer">
@@ -20,7 +20,7 @@
                     </div>
                     <div>
                         <h3 class="text-base font-semibold text-black">@Model.FullName</h3>
-                        <p class="text-sm text-blue-600 mt-1 font-normal">@@lithaCele</p>
+                        <p class="text-sm text-blue-600 mt-1 font-normal">@Model.UserName</p>
                     </div>
                     <button type="submit" id="saveButton" class="hidden button bg-blue-500 text-white px-4 py-1 rounded ml-auto">
                         Save
@@ -55,28 +55,21 @@
                             <div class="flex items-center gap-10">
                                 <label class="w-32 text-right">Full name</label>
                                 <div class="flex-1">
-                                    <input type="text" name="fullname" placeholder="Enter your full name" @* value="@Model.FullName" *@ class="w-full" />
+                                    <input value="@Model.FullName" type="text" name="fullname" placeholder="Enter your full name" class="w-full" />
                                 </div>
                             </div>
 
                             <div class="flex items-center gap-10">
                                 <label class="w-32 text-right">Username</label>
                                 <div class="flex-1">
-                                    <input type="text" name="username" placeholder="Enter your user name" @* value="@@lithaCele" *@ class="w-full" />
+                                    <input value="@Model.UserName" type="text" name="username" placeholder="Enter your user name" class="w-full" />
                                 </div>
                             </div>
-
-                            @* <div class="flex items-center gap-10">
-                                <label class="w-32 text-right">Email address</label>
-                                <div class="flex-1">
-                                    <input type="email" name="emailAddress" placeholder="Enter your email address" value="" class="w-full" />
-                                </div>
-                            </div> *@
 
                             <div class="flex items-center gap-10">
                                 <label class="w-32 text-right">Bio</label>
                                 <div class="flex-1">
-                                    <textarea class="w-full" name="bio" rows="5" placeholder="Enter your bio"></textarea>
+                                    <textarea class="w-full" name="bio" rows="5" placeholder="Enter your bio">@Model.Bio</textarea>
                                 </div>
                             </div>
 
