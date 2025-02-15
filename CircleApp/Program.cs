@@ -47,6 +47,14 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Auth:Google:ClientId"] ?? "";
+        options.ClientSecret = builder.Configuration["Auth:Google:ClientSecret"] ?? "";
+        options.CallbackPath = "/signin-google";
+    });
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
