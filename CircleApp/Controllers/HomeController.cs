@@ -1,18 +1,15 @@
-using CircleApp.Data;
-using CircleApp.Data.Helpers;
+using CircleApp.Controllers.Base;
 using CircleApp.Data.Helpers.Enums;
 using CircleApp.Data.Models;
 using CircleApp.Data.Services;
 using CircleApp.ViewModels.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace CircleApp.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHashtagsService _hashtagsService;
@@ -29,9 +26,11 @@ namespace CircleApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var loggedInUserId = 1;
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null)
+                return RedirectToLogin();
 
-            var allPosts = await _postService.GetAllPostsAsync(loggedInUserId);
+            var allPosts = await _postService.GetAllPostsAsync(loggedInUserId.Value);
             return View(allPosts);
         }
 
@@ -44,7 +43,10 @@ namespace CircleApp.Controllers
         public async Task<IActionResult> CreatePost(PostVM post)
         {
             // Get the logged in user
-            int loggedInUser = 1;
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null)
+                return RedirectToLogin();
+
             var imageUploadPath = await _filesService.UploadImageAsync(post.Image, ImageFileType.PostImage);
             // Create a new Post/Status
             var newPost = new Post
@@ -54,7 +56,7 @@ namespace CircleApp.Controllers
                 DateUpdated = DateTime.UtcNow,
                 ImageUrl = imageUploadPath,
                 NrOfReposts = 0,
-                UserId = loggedInUser
+                UserId = loggedInUserId.Value,
 
             };
 
@@ -66,33 +68,42 @@ namespace CircleApp.Controllers
         }
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
         {
-            int loggedInUserId = 1;
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null)
+                return RedirectToLogin();
 
-            await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUserId);
+            await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUserId.Value);
             return RedirectToAction("Index");
         }
         public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
         {
-            int loggedInUserId = 1;
-            await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUserId);
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null)
+                return RedirectToLogin();
+
+            await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUserId.Value);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
         {
-            int loggedInUserId = 1;
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null)
+                return RedirectToLogin();
 
-            await _postService.TogglePostVisibilityAsync(postVisibilityVM.PostId, loggedInUserId);
+            await _postService.TogglePostVisibilityAsync(postVisibilityVM.PostId, loggedInUserId.Value);
             return RedirectToAction("Index");
         }
         [HttpPost]
         public async Task<IActionResult> AddPostReport(PostReportVM postReportVM)
         {
             //get id for the logged in user
-            int loggedInUserId = 1;
-            
-            await _postService.ReportPostAsync(postReportVM.PostId, loggedInUserId);
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null)
+                return RedirectToLogin();
+
+            await _postService.ReportPostAsync(postReportVM.PostId, loggedInUserId.Value);
 
             return RedirectToAction("Index");
         }
@@ -101,12 +112,14 @@ namespace CircleApp.Controllers
         public async Task<IActionResult> AddPostComment (PostCommentVM postCommentVM)
         {
             //get id for the logged in user
-            int loggedInUserId = 1;
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null)
+                return RedirectToLogin();
 
             // create a post object
             var newComment = new Comment()
             {
-                UserId = loggedInUserId,
+                UserId = loggedInUserId.Value,
                 PostId = postCommentVM.PostId,
                 Content = postCommentVM.Content,
                 DateCreated = DateTime.UtcNow,

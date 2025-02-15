@@ -1,16 +1,17 @@
-﻿using CircleApp.Data.Services;
-using CircleApp.ViewModels.Settings;
+﻿using CircleApp.Controllers.Base;
 using CircleApp.Data.Helpers.Enums;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
 using CircleApp.Data.Models;
+using CircleApp.Data.Services;
+using CircleApp.ViewModels.Settings;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CircleApp.Controllers
 {
     [Authorize]
-    public class SettingsController : Controller
+    public class SettingsController : BaseController
     {
         private readonly IUsersService _usersService;
         private readonly IFilesService _filesService;
@@ -23,22 +24,19 @@ namespace CircleApp.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var userDb = await _usersService.GetUser(int.Parse(loggedInUserId));
-
-            var loggedInUser = await _userManager.GetUserAsync(User);
-
-            return View(loggedInUser);
+            var loggedInUserId = await _userManager.GetUserAsync(User);
+            return View(loggedInUserId);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateProfilePicture(UpdateProfilePictureVM profilePictureVM)
         {
-            var loggedInUser = 1;
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null)
+                return RedirectToLogin();
 
             var uploadedProfilePictureUrl = await _filesService.UploadImageAsync(profilePictureVM.ProfilePictureImage, ImageFileType.ProfilePicture);
-            await _usersService.UpdateUserProfilePicture(loggedInUser, uploadedProfilePictureUrl);
+            await _usersService.UpdateUserProfilePicture(loggedInUserId.Value, uploadedProfilePictureUrl);
             return RedirectToAction("Index");
         }
     }
