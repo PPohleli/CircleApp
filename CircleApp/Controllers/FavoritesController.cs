@@ -1,6 +1,7 @@
 ﻿using CircleApp.Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CircleApp.Controllers
 {
@@ -14,8 +15,8 @@ namespace CircleApp.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            int loggedInUser = 1;
-            var myFavoritePosts = await _postService.GetAllFavoritedPostsAsync(loggedInUser);
+            var loggedInUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var myFavoritePosts = await _postService.GetAllFavoritedPostsAsync(int.Parse(loggedInUser));
             return View(myFavoritePosts);
         }
     }
