@@ -2,6 +2,7 @@
 using CircleApp.Data.Models;
 using CircleApp.ViewModels.Authentication;
 using CircleApp.ViewModels.Settings;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,49 @@ namespace CircleApp.Controllers
             return View(loginVM);
         }
 
+        public IActionResult ExternalLogin(string provider)
+        {
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Authentication");
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+
+            return Challenge(properties, provider);
+        }
+        public async Task<IActionResult> ExternalLoginCallback(string provider)
+        {
+            var info = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+
+            if (info == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                var newUser = new User()
+                {
+                    Email = email,
+                    UserName = email,
+                    FullName = info.Principal.FindFirstValue(ClaimTypes.Name),
+                    EmailConfirmed = true
+                };
+               var result = await _userManager.CreateAsync(newUser);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(newUser, AppRoles.User);
+                    await _userManager.AddClaimAsync(newUser, new Claim(CustomClaim.FullName, newUser.FullName));
+                    await _signInManager.SignInAsync(newUser, isPersistent: false);
+
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            await _signInManager.SignInAsync(user, isPersistent: false);
+
+            return RedirectToAction("Index", "Home");
+        }
+
         //[Authorize]
         [HttpPost]
         public async Task<IActionResult> UpdatePassword(UpdatePasswordVM updatePasswordVM)
@@ -81,7 +125,7 @@ namespace CircleApp.Controllers
                 TempData["PasswordSuccess"] = "Password updated successfully!";
                 TempData["ActiveTab"] = "Password";
                 await _signInManager.RefreshSignInAsync(loggedInUser);
-                
+
             }
 
             return RedirectToAction("Index", "Settings");
@@ -89,7 +133,7 @@ namespace CircleApp.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateProfile(UpdateProfileVM profileVM)
         {
-            var loggedInUser = await _userManager.GetUserAsync(User); 
+            var loggedInUser = await _userManager.GetUserAsync(User);
             if (loggedInUser == null)
                 return RedirectToAction("Login");
 
@@ -131,7 +175,7 @@ namespace CircleApp.Controllers
             var newUser = new User()
             {
                 FullName = $"{registerVM.FirstName} {registerVM.LastName}",
-                Email = registerVM.Email ,
+                Email = registerVM.Email,
                 UserName = registerVM.Email
             };
             var existingUser = await _userManager.FindByEmailAsync(registerVM.Email);
