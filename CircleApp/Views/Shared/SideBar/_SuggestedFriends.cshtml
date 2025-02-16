@@ -4,7 +4,9 @@
     </div>
     <div class="side-list">
         <div class="side-list-item">
-            <a><img src="~/images/avatars/user.png" class="side-list-image rounded-full" /></a>
+            <a asp-controller="Users" asp-action="Details" asp-route-userId="1">
+                <img src="~/images/avatars/user.png" class="side-list-image rounded-full" />
+            </a>
             <div class="flex-1">
                 <a><h4 class="side-list-title">First User</h4></a>
                 <div>5 followers</div>
