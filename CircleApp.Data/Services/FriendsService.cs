@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using CircleApp.Data.Dtos;
 using CircleApp.Data.Helpers.Constants;
 using CircleApp.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -70,7 +71,7 @@ namespace CircleApp.Data.Services
             }
         }
 
-        public async Task<List<User>> GetSuggestedFriendsAsync(int userId)
+        public async Task<List<UserWithFriendsCountDto>> GetSuggestedFriendsAsync(int userId)
         {
             //get existing friends
             var existingFriendIds = await _context.Friendships.Where(n => n.SenderId == userId || n.ReceiverId == userId)
@@ -84,6 +85,11 @@ namespace CircleApp.Data.Services
 
             //get suggested friends
             var suggestedFriends = await _context.Users.Where(n => n.Id != userId && !existingFriendIds.Contains(n.Id) && !pendingRequestIds.Contains(n.Id))
+                .Select(u => new UserWithFriendsCountDto()
+                {
+                    User = u,
+                    FriendsCount = _context.Friendships.Count(f => f.SenderId == u.Id || f.ReceiverId == u.Id),
+                })
                 .Take(5)
                 .ToListAsync();
 
