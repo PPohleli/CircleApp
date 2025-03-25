@@ -15,7 +15,8 @@
                     <a><h4 class="side-list-title">@data.FullName</h4></a>
                     <div>@data.FriendsCountDisplay</div>
                 </div>
-                <form>
+                <form asp-controller="Friends" asp-action="SendFriendRequest">
+                    <input type="hidden" name="receiverId" value="@data.UserId"/>
                     <button type="submit" class="button bg-primary-soft text-primary">Follow</button>
                 </form>
             </div>
