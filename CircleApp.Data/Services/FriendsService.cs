@@ -99,7 +99,7 @@ namespace CircleApp.Data.Services
         {
             var friendRequestsSent = await _context.FriendRequests
                 .Include(n => n.Sender)
-                .Include(n => n.ReceiverId)
+                .Include(n => n.Receiver)
                 .Where(f => f.SenderId == userId && f.Status == FriendshipStatus.Pending)
                 .ToListAsync();
 
