@@ -14,5 +14,6 @@ namespace CircleApp.Data.Services
         Task UpdateRequestAsync(int requestId, string status);
         Task RemoveFriendAsync(int friendshipId);
         Task<List<UserWithFriendsCountDto>> GetSuggestedFriendsAsync(int userId);
+        Task<List<FriendRequest>> GetSentFriendRequestAsync(int userId);
     }
 }
