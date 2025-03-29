@@ -63,11 +63,23 @@ namespace CircleApp.Data.Services
 
         public async Task RemoveFriendAsync(int friendshipId)
         {
-            var friendshipDb = await _context.Friendships.FirstOrDefaultAsync(n => n.Id == friendshipId);
-            if (friendshipDb != null) 
+            var friendship = await _context.Friendships.FirstOrDefaultAsync(n => n.Id == friendshipId);
+            if (friendship != null)
             {
-                _context.Friendships.Remove(friendshipDb);
+                _context.Friendships.Remove(friendship);
                 await _context.SaveChangesAsync();
+
+                //find requests
+                var requests = await _context.FriendRequests
+                    .Where(r => (r.SenderId == friendship.SenderId && r.ReceiverId == friendship.ReceiverId) ||
+                    (r.SenderId == friendship.ReceiverId && r.ReceiverId == friendship.SenderId))
+                    .ToListAsync();
+
+                if (requests.Any())
+                {
+                    _context.FriendRequests.RemoveRange(requests);
+                    await _context.SaveChangesAsync();
+                }
             }
         }
 
