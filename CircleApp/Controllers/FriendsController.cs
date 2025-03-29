@@ -42,6 +42,13 @@ namespace CircleApp.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> AcceptFriendRequest(int requestId)
+        {
+            await _friendsService.UpdateRequestAsync(requestId, FriendshipStatus.Accepted);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public async Task<IActionResult> CancelFriendRequest(int requestId)
         {
             await _friendsService.UpdateRequestAsync(requestId, FriendshipStatus.Canceled);
