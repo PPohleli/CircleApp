@@ -24,6 +24,7 @@ namespace CircleApp.Controllers
             {
                 FriendRequestsSent = await _friendsService.GetSentFriendRequestAsync(userId.Value),
                 FriendRequestsReceived = await _friendsService.GetReceivedFriendRequestAsync(userId.Value),
+                Friends = await _friendsService.GetFriendsAsync(userId.Value),
             };
 
             return View(friendsData);
