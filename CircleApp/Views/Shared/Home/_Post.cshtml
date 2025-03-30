@@ -190,8 +190,8 @@
 
             </div>
 
-            <form asp-controller="Home" asp-action="AddPostComment">
-
+            <form asp-controller="Home" asp-action="AddPostComment" class="add-comment-form">
+                @Html.AntiForgeryToken()
                 <div class="sm:px-4 sm:py-3 p-2.5 border-t border-gray-100 flex items-center gap-1">
                     <a asp-controller="Users" asp-action="Details" asp-route-userId="@Model.UserId">
                         <img src="@(string.IsNullOrEmpty(Model.User.ProfilePictureUrl) ? Url.Content("~/images/avatars/user.png") : Url.Content("~/images/avatars/user.png"))" class="w-6 h-6 rounded-full" />
