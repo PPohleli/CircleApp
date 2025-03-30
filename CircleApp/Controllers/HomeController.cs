@@ -66,6 +66,7 @@ namespace CircleApp.Controllers
             //Redirect the user to home page
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
@@ -79,14 +80,17 @@ namespace CircleApp.Controllers
             var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
             return PartialView("Home/_Post", post);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
         {
             var loggedInUserId = GetUserId();
             if (loggedInUserId == null)
                 return RedirectToLogin();
 
-            await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUserId.Value);
-            return RedirectToAction("Index");
+            var post = await _postService.GetPostByIdAsync(postFavoriteVM.PostId);
+            return PartialView("Home/_Post", post);
         }
 
         [HttpPost]
