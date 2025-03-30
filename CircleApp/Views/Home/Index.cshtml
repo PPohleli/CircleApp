@@ -67,10 +67,12 @@
 
     document.addEventListener('DOMContentLoaded', function (){
         document.getElementById('post-container').addEventListener('click', function(){
-            if (event.target.closest('.like-button')){
+
+            const button = event.target.closest('.like-button, .favorite-button')
+
+            if (button) {
                 event.preventDefault();
 
-                var button = event.target.closest('.like-button');
                 var form = button.closest('form');
                 var postId = form.querySelector('input[name="postId"]').value;
                 var postContainer = document.getElementById('post-' + postId);
