@@ -17,6 +17,7 @@ var dbConnectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(dbConnectionString));
 
 // Services Configuration
+builder.Services.AddScoped<INotificationsService, NotificationsService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IHashtagsService, HashtagsService>();
 builder.Services.AddScoped<IStoriesServices, StoriesService>();
