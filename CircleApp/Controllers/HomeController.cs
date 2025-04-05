@@ -83,7 +83,7 @@ namespace CircleApp.Controllers
 
             var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
 
-            await _hubContext.Clients.User(post.UserId.ToString()).SendAsync("RecieveNotification");
+            await _hubContext.Clients.User(post.UserId.ToString()).SendAsync("RecieveNotification", "new");
 
             return PartialView("Home/_Post", post);
         }
