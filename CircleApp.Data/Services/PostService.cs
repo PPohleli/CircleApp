@@ -1,4 +1,5 @@
-﻿using CircleApp.Data.Helpers;
+﻿using CircleApp.Data.Dtos;
+using CircleApp.Data.Helpers;
 using CircleApp.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -128,8 +129,13 @@ namespace CircleApp.Data.Services
             }
         }
 
-        public async Task TogglePostLikeAsync(int postId, int userId)
+        public async Task<GetNotificationDto> TogglePostLikeAsync(int postId, int userId)
         {
+            var response = new GetNotificationDto()
+            {
+                Success = false,
+                SendNotification = false
+            };
             // Check if user has already liked the post
             var like = await _context.Likes.Where(l => l.PostId == postId && l.UserId == userId).FirstOrDefaultAsync();
 
@@ -149,8 +155,11 @@ namespace CircleApp.Data.Services
                 await _context.SaveChangesAsync();
 
                 //add notification to the database
-                await _notificationsService.AddNewNotificationAsync(userId, "Someone liked your post", "Like");
+                response.SendNotification = true;
             }
+            response.Success = true;
+
+            return response;
         }
 
         public async Task TogglePostVisibilityAsync(int postId, int userId)
