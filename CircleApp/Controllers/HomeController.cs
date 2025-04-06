@@ -83,8 +83,8 @@ namespace CircleApp.Controllers
                 return RedirectToLogin();
 
             var result = await _postService.TogglePostLikeAsync(postLikeVM.PostId, userId.Value);
-            if (result.SendNotification)
-                await _notificationsService.AddNewNotificationAsync(userId.Value, "Liked", "Like");
+            //if (result.SendNotification)
+            //    await _notificationsService.AddNewNotificationAsync(userId.Value, "Liked", "Like");
 
             var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
             

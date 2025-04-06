@@ -1,4 +1,5 @@
-﻿using CircleApp.Data.Hubs;
+﻿using CircleApp.Data.Helpers.Constants;
+using CircleApp.Data.Hubs;
 using CircleApp.Data.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +20,15 @@ namespace CircleApp.Data.Services
             _context = context;
             _hubContext = hubContext;
         }
-        public async Task AddNewNotificationAsync(int userId, string message, string notificationType)
+        public async Task AddNewNotificationAsync(int userId, string notificationType, string userFullName, int? postId)
         {
             var newNotification = new Notification()
             {
                 UserId = userId,
-                Message = message,
+                Message = GetPostMessage(notificationType, userFullName),
                 Type = notificationType,
                 IsRead = false,
+                PostId = postId,
                 DateCreated = DateTime.UtcNow,
                 DateUpdated = DateTime.UtcNow,
             };
@@ -41,6 +43,21 @@ namespace CircleApp.Data.Services
         {
             var count = await _context.Notifications.Where(n => n.UserId == userId && !n.IsRead).CountAsync();
             return count;
+        }
+        private string GetPostMessage(string notificationType, string userFullName)
+        {
+            var message = "";
+
+            switch(notificationType)
+            {
+                case NotificationType.Like: message = $"{userFullName} liked your post"; break;
+                case NotificationType.Comment: message = $"{userFullName} commented on your post"; break;
+                case NotificationType.Favorite:message = $"{userFullName} marked your post as favorite"; break;
+                case NotificationType.FriendRequest: message = $"{userFullName} has sent you a friend request"; break;
+                case NotificationType.FriendRequestApproved: message = $"{userFullName} has accepeted your friend request"; break;
+                default: message = ""; break;
+            }
+            return message;
         }
     }
 }
