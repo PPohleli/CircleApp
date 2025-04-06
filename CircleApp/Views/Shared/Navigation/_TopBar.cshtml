@@ -84,6 +84,17 @@ integrity="sha512-a+73ErrZPjhqOu0qbW1QLsenEF4pvDjmnd+Ws6hkDyJlrwAigOQAxQhIT+fPNF
 crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        fetch("Notifications/GetCount",{
+            method: 'GET',
+            headers: {
+                'Content-Type':'application/json'
+            }
+        }).then(response => response.json()).then(data => {
+            console.log("notifications count = ", data);
+            document.getElementById("notificationCount").innerHTML = data;
+        }).catch(error => {
+            console.error("Error fetching notification count: ", error);
+        })
         //SignalR connection
         const connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
 
