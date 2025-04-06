@@ -18,14 +18,21 @@ namespace CircleApp.Controllers
         private readonly IPostService _postService;
         private readonly IFilesService _filesService;
         private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly INotificationsService _notificationsService;
 
-        public HomeController(ILogger<HomeController> logger, IPostService postService, IHashtagsService hashtagsService, IFilesService filesService, IHubContext<NotificationHub> hubContext)
+        public HomeController(ILogger<HomeController> logger,
+            IPostService postService,
+            IHashtagsService hashtagsService,
+            IFilesService filesService,
+            IHubContext<NotificationHub> hubContext,
+            INotificationsService notificationsService)
         {
             _logger = logger;
             _hashtagsService = hashtagsService;
             _postService = postService;
             _filesService = filesService;
             _hubContext = hubContext;
+            _notificationsService = notificationsService;
         }
 
         public async Task<IActionResult> Index()
@@ -75,15 +82,15 @@ namespace CircleApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
         {
-            var loggedInUserId = GetUserId();
-            if (loggedInUserId == null)
+            var userId = GetUserId();
+            if (userId == null)
                 return RedirectToLogin();
 
-            await _postService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUserId.Value);
+            await _postService.TogglePostLikeAsync(postLikeVM.PostId, userId.Value);
 
             var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
-
-            await _hubContext.Clients.User(post.UserId.ToString()).SendAsync("RecieveNotification", "new");
+            var notificationNumber = await _notificationsService.GetUnreadNotificationsCountAsync(userId.Value);
+            await _hubContext.Clients.User(post.UserId.ToString()).SendAsync("RecieveNotification", notificationNumber);
 
             return PartialView("Home/_Post", post);
         }
