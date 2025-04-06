@@ -78,7 +78,10 @@ namespace CircleApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TogglePostLike(PostLikeVM postLikeVM)
         {
+
             var userId = GetUserId();
+            var userName = GetUserFullName();
+
             if (userId == null)
                 return RedirectToLogin();
 
