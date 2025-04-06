@@ -2,7 +2,6 @@ using CircleApp.Controllers.Base;
 using CircleApp.Data.Helpers.Enums;
 using CircleApp.Data.Models;
 using CircleApp.Data.Services;
-using CircleApp.Hubs;
 using CircleApp.ViewModels.Home;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,21 +16,18 @@ namespace CircleApp.Controllers
         private readonly IHashtagsService _hashtagsService;
         private readonly IPostService _postService;
         private readonly IFilesService _filesService;
-        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly INotificationsService _notificationsService;
 
         public HomeController(ILogger<HomeController> logger,
             IPostService postService,
             IHashtagsService hashtagsService,
             IFilesService filesService,
-            IHubContext<NotificationHub> hubContext,
             INotificationsService notificationsService)
         {
             _logger = logger;
             _hashtagsService = hashtagsService;
             _postService = postService;
             _filesService = filesService;
-            _hubContext = hubContext;
             _notificationsService = notificationsService;
         }
 
@@ -86,12 +82,12 @@ namespace CircleApp.Controllers
             if (userId == null)
                 return RedirectToLogin();
 
-            await _postService.TogglePostLikeAsync(postLikeVM.PostId, userId.Value);
+            var result = await _postService.TogglePostLikeAsync(postLikeVM.PostId, userId.Value);
+            if (result.SendNotification)
+                await _notificationsService.AddNewNotificationAsync(userId.Value, "Liked", "Like");
 
             var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
-            var notificationNumber = await _notificationsService.GetUnreadNotificationsCountAsync(userId.Value);
-            await _hubContext.Clients.User(post.UserId.ToString()).SendAsync("RecieveNotification", notificationNumber);
-
+            
             return PartialView("Home/_Post", post);
         }
 
