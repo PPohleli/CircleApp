@@ -1,4 +1,5 @@
 using CircleApp.Controllers.Base;
+using CircleApp.Data.Helpers.Constants;
 using CircleApp.Data.Helpers.Enums;
 using CircleApp.Data.Models;
 using CircleApp.Data.Services;
@@ -86,11 +87,12 @@ namespace CircleApp.Controllers
                 return RedirectToLogin();
 
             var result = await _postService.TogglePostLikeAsync(postLikeVM.PostId, userId.Value);
-            //if (result.SendNotification)
-            //    await _notificationsService.AddNewNotificationAsync(userId.Value, "Liked", "Like");
 
             var post = await _postService.GetPostByIdAsync(postLikeVM.PostId);
-            
+
+            if (result.SendNotification)
+                await _notificationsService.AddNewNotificationAsync(post.UserId, NotificationType.Like, userName, postLikeVM.PostId);
+
             return PartialView("Home/_Post", post);
         }
 
@@ -99,10 +101,18 @@ namespace CircleApp.Controllers
         public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
         {
             var loggedInUserId = GetUserId();
+            var userName = GetUserFullName();
+
             if (loggedInUserId == null)
                 return RedirectToLogin();
 
+            var result = await _postService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUserId.Value);
+
             var post = await _postService.GetPostByIdAsync(postFavoriteVM.PostId);
+
+            if (result.SendNotification)
+                await _notificationsService.AddNewNotificationAsync(post.UserId, NotificationType.Favorite, userName, postFavoriteVM.PostId);
+
             return PartialView("Home/_Post", post);
         }
 
@@ -135,6 +145,8 @@ namespace CircleApp.Controllers
         {
             //get id for the logged in user
             var loggedInUserId = GetUserId();
+            var userName = GetUserFullName();
+
             if (loggedInUserId == null)
                 return RedirectToLogin();
 
@@ -147,9 +159,13 @@ namespace CircleApp.Controllers
                 DateCreated = DateTime.UtcNow,
                 DateUpdated = DateTime.UtcNow
             };
+
             await _postService.AddPostCommentAsync(newComment);
 
             var post = await _postService.GetPostByIdAsync(postCommentVM.PostId);
+
+            await _notificationsService.AddNewNotificationAsync(post.UserId, NotificationType.Favorite, userName, postCommentVM.PostId);
+
             return PartialView("Home/_Post", post);
         }
 
