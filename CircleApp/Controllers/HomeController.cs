@@ -164,7 +164,7 @@ namespace CircleApp.Controllers
 
             var post = await _postService.GetPostByIdAsync(postCommentVM.PostId);
 
-            await _notificationsService.AddNewNotificationAsync(post.UserId, NotificationType.Favorite, userName, postCommentVM.PostId);
+            await _notificationsService.AddNewNotificationAsync(post.UserId, NotificationType.Comment, userName, postCommentVM.PostId);
 
             return PartialView("Home/_Post", post);
         }

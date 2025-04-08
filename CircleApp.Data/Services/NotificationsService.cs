@@ -44,6 +44,16 @@ namespace CircleApp.Data.Services
             var count = await _context.Notifications.Where(n => n.UserId == userId && !n.IsRead).CountAsync();
             return count;
         }
+        public async Task<List<Notification>> GetNotificationsAsync(int userId)
+        {
+            var allNotifications = await _context.Notifications
+                .Where(n => n.UserId == userId)
+                .OrderBy(n => n.IsRead)
+                .ThenByDescending(n => n.DateCreated)
+                .ToListAsync();
+            
+            return allNotifications;
+        }
         private string GetPostMessage(string notificationType, string userFullName)
         {
             var message = "";
