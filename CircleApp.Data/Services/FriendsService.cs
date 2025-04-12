@@ -36,7 +36,7 @@ namespace CircleApp.Data.Services
 
         }
 
-        public async Task UpdateRequestAsync(int requestId, string newStatus)
+        public async Task<FriendRequest> UpdateRequestAsync(int requestId, string newStatus)
         {
             var requestDb = await _context.FriendRequests.FirstOrDefaultAsync(n => n.Id == requestId);
             if (requestDb != null)
@@ -59,6 +59,7 @@ namespace CircleApp.Data.Services
 
                 await _context.SaveChangesAsync();
             }
+            return requestDb;
         }
 
         public async Task RemoveFriendAsync(int friendshipId)
