@@ -61,7 +61,10 @@ namespace CircleApp.Controllers
             var request = await _friendsService.UpdateRequestAsync(requestId, status);
 
             if (status == FriendshipStatus.Accepted)
+            {
                 await _notificationsService.AddNewNotificationAsync(request.SenderId, NotificationType.FriendRequestApproved, userName, null);
+            }
+               
 
             return RedirectToAction("Index");
         }
