@@ -20,7 +20,7 @@ namespace CircleApp.Data.Services
         {
             //var posts = await _context.Posts.Include(n => n.Reports).Where(n => n.Reports.Count > 5 && !n.IsDeleted).ToListAsync();
             
-            var posts = await _context.Posts.Where(n => n.NrOfReposts > 5 && !n.IsDeleted).ToListAsync();
+            var posts = await _context.Posts.Include(n => n.User).Where(n => n.NrOfReposts > 5 && !n.IsDeleted).ToListAsync();
 
             return posts;
         }
