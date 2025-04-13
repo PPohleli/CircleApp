@@ -24,6 +24,7 @@ builder.Services.AddScoped<IStoriesServices, StoriesService>();
 builder.Services.AddScoped<IFilesService, FilesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IFriendsService, FriendsService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // Identity Configuration
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
