@@ -12,17 +12,29 @@ namespace CircleApp.Data.Services
     {
         private readonly AppDbContext _context;
 
-        public AdminService(AppDbContext context) 
+        public AdminService(AppDbContext context)
         {
             _context = context;
         }
         public async Task<List<Post>> GetReportedPostAsync()
         {
             //var posts = await _context.Posts.Include(n => n.Reports).Where(n => n.Reports.Count > 5 && !n.IsDeleted).ToListAsync();
-            
+
             var posts = await _context.Posts.Include(n => n.User).Where(n => n.NrOfReposts > 5 && !n.IsDeleted).ToListAsync();
 
             return posts;
+        }
+
+        public async Task ApproveReportAsync(int postId)
+        {
+            var postDb = await _context.Posts.FirstOrDefaultAsync(n => n.Id == postId);
+
+            if (postDb != null)
+            {
+                postDb.IsDeleted = true;
+                _context.Posts.Update(postDb);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
