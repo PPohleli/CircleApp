@@ -36,5 +36,25 @@ namespace CircleApp.Data.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task RejectReportAsync(int postId)
+        {
+            var postDb = await _context.Posts.FirstOrDefaultAsync(n => n.Id == postId);
+
+            if (postDb != null)
+            {
+                postDb.NrOfReposts = 0; 
+                _context.Posts.Update(postDb);
+                await _context.SaveChangesAsync();
+            }
+
+            var postReports = await _context.Reports.Where(n => n.PostId == postId).ToListAsync();
+
+            if (postReports.Any())
+            {
+                _context.Reports.RemoveRange(postReports);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace CircleApp.Data.Services
     {
         Task<List<Post>> GetReportedPostAsync();
         Task ApproveReportAsync(int postId);
+        Task RejectReportAsync(int postId);
     }
 }
