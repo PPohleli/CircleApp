@@ -8,7 +8,7 @@
                 <div class="flex-shrink-0 mr-4">
                     <div class="relative lg:h-28 lg:w-28 w-28 h-28">
                         <div class="relative overflow-hidden rounded-full md:border-[6px] border-gray-100 shrink-0">
-                            <img src="@(string.IsNullOrEmpty(Model.User.ProfilePictureUrl) ? Url.Content("~/images/avatars/user.png") : Url.Content("~/"+Model.User.ProfilePictureUrl))" />
+                            <img src="@(string.IsNullOrEmpty(Model.User.ProfilePictureUrl) ? Url.Content("~/images/avatars/user.png") : Model.User.ProfilePictureUrl)" />
                         </div>
                     </div>
                 </div>

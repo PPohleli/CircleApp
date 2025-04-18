@@ -29,7 +29,7 @@
     @* Post heading *@
     <div class="flex gap-3 sm:p-4 p-2.5 text-sm font-medium">
         <a asp-controller="Users" asp-action="Details" asp-route-userId="@Model.UserId">
-            <img src="@(!string.IsNullOrEmpty(Model.User.ProfilePictureUrl) ? Url.Content("~/"+Model.User.ProfilePictureUrl) : Url.Content("~/images/avatars/user.png"))" class="w-9 h-9 rounded-full" />
+            <img src="@(!string.IsNullOrEmpty(Model.User.ProfilePictureUrl) ? Model.User.ProfilePictureUrl : Url.Content("~/images/avatars/user.png"))" class="w-9 h-9 rounded-full" />
         </a>
         <div class="flex-1">
             <a asp-controller="Users" asp-action="Details" asp-route-userId="@Model.UserId">
@@ -84,7 +84,7 @@
     {
         <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.Id">
             <div class="relative w-full h-full">
-                <img src="@Url.Content("~/"+Model.ImageUrl)" class="sm:rounded-lg w-full h-full object-cover" />
+                <img src="@Model.ImageUrl" class="sm:rounded-lg w-full h-full object-cover" />
             </div>
         </a>
     }
@@ -153,7 +153,7 @@
 
                     <div class="flex items-start gap-3 relative">
                         <a asp-controller="Users" asp-action="Details" asp-route-userId="@comment.UserId">
-                            <img src="@(!string.IsNullOrEmpty(comment.User.ProfilePictureUrl) ? Url.Content("~/"+ comment.User.ProfilePictureUrl) : Url.Content("~/images/avatars/user.png"))" class="w-6 h-6 mt-1 rounded-full" />
+                            <img src="@(!string.IsNullOrEmpty(comment.User.ProfilePictureUrl) ? comment.User.ProfilePictureUrl : Url.Content("~/images/avatars/user.png"))" class="w-6 h-6 mt-1 rounded-full" />
                         </a>
                         <div class="flex-1">
                             <div class="flex justify-content-between">
