@@ -16,12 +16,14 @@ builder.Services.AddControllersWithViews();
 var dbConnectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(dbConnectionString));
 
+var blobConnectionString = builder.Configuration["AzureStorageConnectionString"];
+
 // Services Configuration
 builder.Services.AddScoped<INotificationsService, NotificationsService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IHashtagsService, HashtagsService>();
 builder.Services.AddScoped<IStoriesServices, StoriesService>();
-builder.Services.AddScoped<IFilesService, FilesService>();
+builder.Services.AddScoped<IFilesService>(s => new FilesService(blobConnectionString));
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IFriendsService, FriendsService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
